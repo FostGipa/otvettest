@@ -34,6 +34,7 @@ app.post('/ask', async (req, res) => {
     }
 
     res.json({ reply: data.choices?.[0]?.message?.content || "Ошибка: пустой ответ" });
+    res.json({ reply: "Ошибка OpenAI: ${data.error?.message" });
 
   } catch (err) {
     console.error("❌ Ошибка сервера:", err);
@@ -43,3 +44,4 @@ app.post('/ask', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+
