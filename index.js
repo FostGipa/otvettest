@@ -26,6 +26,13 @@ app.post('/ask', async (req, res) => {
     });
 
     const data = await response.json();
+
+    // ✅ Логируем весь ответ, если есть ошибка
+    if (!response.ok) {
+      console.error('⚠️ Ошибка от OpenAI API:', data);
+      return res.status(response.status).json({ error: data });
+    }
+
     res.json({ reply: data.choices?.[0]?.message?.content || "Ошибка: пустой ответ" });
 
   } catch (err) {
