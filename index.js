@@ -20,7 +20,15 @@ app.post('/ask', async (req, res) => {
       },
       body: JSON.stringify({
         model: "gpt-5",
-        messages: [{ role: "user", content: message }],
+        messages = [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "Реши задачу. Напиши только ответ и номер ответа" },
+            { type: "image_url", image_url: { url: message } }
+          ]
+        }
+      ];
         max_completion_tokens: 5000
       })
     });
@@ -44,4 +52,5 @@ app.post('/ask', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+
 
