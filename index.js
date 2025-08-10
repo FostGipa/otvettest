@@ -20,7 +20,7 @@ app.post('/ask', async (req, res) => {
       },
       body: JSON.stringify({
         model: "gpt-5",
-        messages = [
+        messages: [
         {
           role: "user",
           content: [
@@ -52,6 +52,7 @@ app.post('/ask', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+
 
 
 
