@@ -84,10 +84,16 @@ app.post('/ask-photo', async (req, res) => {
 
 app.get("/openai-balance", async (req, res) => {
   try {
+    console.log("📡 Запрос к OpenAI на получение баланса...");
+
     const response = await fetch("https://api.openai.com/dashboard/billing/credit_grants", {
       headers: { "Authorization": `Bearer ${OPENAI_API_KEY}` }
     });
+
+    console.log("🔹 Статус ответа OpenAI:", response.status);
     const data = await response.json();
+    console.log("🔹 Ответ OpenAI:", JSON.stringify(data, null, 2));
+
     res.json({
       total: data.total_granted,
       used: data.total_used,
@@ -97,13 +103,16 @@ app.get("/openai-balance", async (req, res) => {
         : null
     });
   } catch (err) {
+    console.error("❌ Ошибка при запросе баланса:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
 
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+
 
 
 
