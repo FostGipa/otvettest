@@ -82,8 +82,29 @@ app.post('/ask-photo', async (req, res) => {
   }
 });
 
+app.get("/openai-balance", async (req, res) => {
+  try {
+    const response = await fetch("https://api.openai.com/dashboard/billing/credit_grants", {
+      headers: { "Authorization": `Bearer ${OPENAI_API_KEY}` }
+    });
+    const data = await response.json();
+    res.json({
+      total: data.total_granted,
+      used: data.total_used,
+      remaining: data.total_available,
+      expires: data.grants?.data?.[0]?.expires_at
+        ? new Date(data.grants.data[0].expires_at * 1000).toISOString().split("T")[0]
+        : null
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+
 
 
 
