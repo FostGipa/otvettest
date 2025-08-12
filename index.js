@@ -86,33 +86,22 @@ app.get("/openai-balance", async (req, res) => {
   try {
     const headers = { "Authorization": `Bearer ${OPENAI_API_KEY}` };
 
-    // 1. Лимит и дата окончания
-    const subRes = await fetch("https://api.openai.com/v1/dashboard/billing/subscription", { headers });
-    const subData = await subRes.json();
-    console.log("🔹 Subscription:", JSON.stringify(subData, null, 2));
-
-    const hardLimit = subData.hard_limit_usd; // лимит в $
-    const accessUntil = subData.access_until
-      ? new Date(subData.access_until * 1000).toISOString().split("T")[0]
-      : null;
-
-    // 2. Потрачено за месяц
     const startDate = new Date();
-    startDate.setDate(1); // 1 число текущего месяца
+    startDate.setDate(1);
     const endDate = new Date();
+
     const usageUrl = `https://api.openai.com/v1/dashboard/billing/usage?start_date=${startDate.toISOString().split("T")[0]}&end_date=${endDate.toISOString().split("T")[0]}`;
     const usageRes = await fetch(usageUrl, { headers });
     const usageData = await usageRes.json();
+
     console.log("🔹 Usage:", JSON.stringify(usageData, null, 2));
 
-    const used = (usageData.total_usage || 0) / 100; // в $ (API отдаёт в центах)
-    const remaining = hardLimit !== null ? (hardLimit - used) : null;
+    const used = (usageData.total_usage || 0) / 100; // в $
 
     res.json({
-      limit: hardLimit,
       used: used,
-      remaining: remaining,
-      renews: accessUntil
+      period_start: startDate.toISOString().split("T")[0],
+      period_end: endDate.toISOString().split("T")[0]
     });
 
   } catch (err) {
@@ -123,6 +112,7 @@ app.get("/openai-balance", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+
 
 
 
